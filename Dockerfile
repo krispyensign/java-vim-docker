@@ -42,5 +42,5 @@ RUN git clone https://github.com/eclipse/eclipse.jdt.ls\
 	&& cd eclipse.jdt.ls\
 	&& ./mvnw clean verify
 
-# RUN echo "\n" | vim +PluginInstall +qall
+RUN echo "\n" | vim +PluginInstall +qall
 
