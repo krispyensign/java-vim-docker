@@ -14,7 +14,9 @@ RUN yum -y install python34-devel\
 	ncurses-devel\
 	which\
 	unzip\
-	zip
+	zip\
+	make
+
 RUN pip3 install neovim
 
 RUN git clone https://github.com/vim/vim\
