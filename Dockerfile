@@ -1,8 +1,8 @@
 FROM centos:latest
 
-RUN yum -y install wget curl
-
 WORKDIR /tmp
+
+RUN yum -y install wget curl
 RUN wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
 RUN yum install -y /tmp/epel-release-latest-7.noarch.rpm
 RUN yum -y install python34-devel\
@@ -16,6 +16,12 @@ RUN yum -y install python34-devel\
 	unzip\
 	zip
 RUN pip3 install neovim
+
+RUN git clone https://github.com/vim/vim\
+  && cd vim\
+  && ./configure\
+  && make\
+  && make install
 
 RUN useradd -ms /bin/bash vimuser
 USER vimuser
@@ -32,8 +38,7 @@ COPY vimrc /home/vimuser/.vimrc
 
 RUN git clone https://github.com/eclipse/eclipse.jdt.ls\
 	&& cd eclipse.jdt.ls\
-	&& ./mvnw clean verify 
-
+	&& ./mvnw clean verify
 
 # RUN echo "\n" | vim +PluginInstall +qall
 
