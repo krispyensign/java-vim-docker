@@ -26,19 +26,24 @@ RUN git clone https://github.com/vim/vim\
   && cd vim\
   && ./configure\
   && make\
-  && make install
+  && make install\
+  && cd ..\
+  && rm -fr vim
 
 RUN git clone https://github.com/universal-ctags/ctags\
   && cd ctags\
   && ./autogen.sh\
   && ./configure\
   && make\
-  && make install
+  && make install\
+  && cd ..\
+  && rm -fr ctags
 
 RUN useradd -ms /bin/bash vimuser
 COPY vimrc /home/vimuser/.vimrc
 RUN chmod +x /home/vimuser/bin/java-lsp.sh\
   && chown vimuser:vimuser /home/vimuser/bin/java-lsp.sh
+RUN chown vimuser:vimuser /home/vimuser/.vimrc
 USER vimuser
 WORKDIR /home/vimuser
 
