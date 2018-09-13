@@ -65,4 +65,7 @@ RUN git clone https://github.com/eclipse/eclipse.jdt.ls\
 RUN echo "\n" | vim +PluginInstall +qall
 
 USER root
-RUN yum uninstall 
+RUN yum remove -y autoconf automake make gcc cargo
+RUN yum clean all
+USER vimuser
+WORKDIR /home/vimuser
