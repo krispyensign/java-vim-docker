@@ -14,7 +14,9 @@ RUN yum -y install python34-devel\
 	ncurses-devel\
 	which\
 	unzip\
-	zip
+	zip\
+	make
+
 RUN pip3 install neovim
 
 RUN git clone https://github.com/vim/vim\
@@ -42,5 +44,5 @@ RUN git clone https://github.com/eclipse/eclipse.jdt.ls\
 	&& cd eclipse.jdt.ls\
 	&& ./mvnw clean verify
 
-# RUN echo "\n" | vim +PluginInstall +qall
+RUN echo "\n" | vim +PluginInstall +qall
 
