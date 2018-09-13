@@ -35,7 +35,9 @@ RUN mkdir -p /home/vimuser/.vim/\
 	&& git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
 
 COPY vimrc /home/vimuser/.vimrc
-
+RUN mkdir -p /home/vimuser/bin
+COPY java-lsp.sh /home/vimuser/bin/java-lsp.sh
+RUN chmod +x /home/vimuser/bin/java-lsp.sh
 RUN git clone https://github.com/eclipse/eclipse.jdt.ls\
 	&& cd eclipse.jdt.ls\
 	&& ./mvnw clean verify

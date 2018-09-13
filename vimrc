@@ -51,7 +51,7 @@ let g:airline_powerline_fonts = 1
 let g:deoplete#enable_at_startup = 1
 
 "LanguageClient settings
-let g:LanguageClient_serverCommands = {'java': ['/home/vimuser/java-lsp.sh'],}
+let g:LanguageClient_serverCommands = {'java': ['/home/vimuser/bin/java-lsp.sh'],}
 
 "tagbar settings
 let g:tagbar_map_showproto = 'P'
