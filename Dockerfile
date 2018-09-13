@@ -15,12 +15,22 @@ RUN yum -y install python34-devel\
 	which\
 	unzip\
 	zip\
-	make
+	make\
+  gcc\
+  automake\
+  autoconf
 
 RUN pip3 install neovim
 
 RUN git clone https://github.com/vim/vim\
   && cd vim\
+  && ./configure\
+  && make\
+  && make install
+
+RUN git clone https://github.com/universal-ctags/ctags\
+  && cd ctags\
+  && ./autogen.sh\
   && ./configure\
   && make\
   && make install
