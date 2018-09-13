@@ -30,8 +30,9 @@ USER vimuser
 WORKDIR /home/vimuser
 
 RUN curl -s "https://get.sdkman.io" | bash
-RUN source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk install gradle 4.10
-RUN source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk install maven
+RUN source "$HOME/.sdkman/bin/sdkman-init.sh"\
+  && sdk install gradle 4.10\
+  && sdk install maven
 
 RUN mkdir -p /home/vimuser/.vim/\
 	&& git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
