@@ -24,7 +24,7 @@ RUN pip3 install neovim
 
 RUN git clone https://github.com/vim/vim\
   && cd vim\
-  && ./configure\
+  && ./configure --enable-python3interp\
   && make\
   && make install\
   && cd ..\
@@ -68,7 +68,9 @@ RUN cd /home/vimuser/.vim/bundle/LanguageClient-neovim\
   && make release
 
 USER root
+
 RUN yum remove -y autoconf automake make gcc cargo
 RUN yum clean all
+
 USER vimuser
 WORKDIR /home/vimuser
