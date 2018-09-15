@@ -60,7 +60,7 @@ RUN mkdir -p /home/vimuser/.vim/\
 
 RUN git clone https://github.com/eclipse/eclipse.jdt.ls\
   && cd eclipse.jdt.ls\
-  && ./mvnw clean install
+  && ./mvnw install -DskipTests
 
 RUN echo "\n" | vim +PluginInstall +qall
 
