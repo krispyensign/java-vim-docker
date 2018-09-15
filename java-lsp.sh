@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-server=/home/so/Workshop/
+server=/home/vimuser
 
 java \
     -Declipse.application=org.eclipse.jdt.ls.core.id1 \

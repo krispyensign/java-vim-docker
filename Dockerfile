@@ -70,6 +70,7 @@ RUN cd /home/vimuser/.vim/bundle/LanguageClient-neovim\
 RUN cd /home/vimuser/.vim/bundle/LanguageClient-neovim\
   && rm -fr build.rs Cargo.toml install.ps1 LICENSE.txt min-vimrc src tests\
             Cargo.lock ci INSTALL.md install.sh Makefile target TODO.md
+RUN rm -fr .cache .cargo .eclipse .gradle
 
 USER root
 WORKDIR /tmp
