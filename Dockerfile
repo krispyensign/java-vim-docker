@@ -7,8 +7,6 @@ RUN wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
 RUN yum install -y /tmp/epel-release-latest-7.noarch.rpm
 RUN yum -y install python34-devel\
   python34-pip\
-  java-1.8.0-openjdk\
-  java-1.8.0-openjdk-devel\
   git\
   cargo\
   ncurses-devel\
@@ -21,6 +19,16 @@ RUN yum -y install python34-devel\
   autoconf
 
 RUN pip3 install neovim
+
+RUN wget --no-cookies --no-check-certificate --header "Cookie: oraclelicense=accept-securebackup-cookie" \
+    http://download.oracle.com/otn-pub/java/jdk/10.0.1+10/fb4372174a714e6b8c52526dc134031e/jdk-10.0.1_linux-x64_bin.tar.gz\
+  && tar zxf jdk-10.0.1_linux-x64_bin.tar.gz -C /usr/local\
+  && mv /usr/local/jdk-10.0.1 /usr/local/jdk-10\
+  && alternatives --install /usr/bin/java java /usr/local/jdk-10/bin/java 1\
+  && alternatives --install /usr/bin/jar jar /usr/local/jdk-10/bin/jar 1\
+  && alternatives --install /usr/bin/javac javac /usr/local/jdk-10/bin/javac 1\
+  && alternatives --set jar /usr/local/jdk-10/bin/jar\
+  && alternatives --set javac /usr/local/jdk-10/bin/javac
 
 RUN git clone https://github.com/vim/vim\
   && cd vim\
@@ -74,8 +82,13 @@ RUN rm -fr .cache .cargo .eclipse .gradle
 
 USER root
 WORKDIR /tmp
+
 RUN yum remove -y autoconf automake make gcc cargo
 RUN yum clean all
 
 USER vimuser
 WORKDIR /home/vimuser
+
+ENV JAVA_HOME /usr/local/jdk-10
+ENV PATH $PATH:/usr/local/jdk-10/bin
+
