@@ -6,16 +6,16 @@ RUN yum -y install wget curl
 RUN wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
 RUN yum install -y /tmp/epel-release-latest-7.noarch.rpm
 RUN yum -y install python34-devel\
-	python34-pip\
-	java-1.8.0-openjdk\
-	java-1.8.0-openjdk-devel\
-	git\
-	cargo\
-	ncurses-devel\
-	which\
-	unzip\
-	zip\
-	make\
+  python34-pip\
+  java-1.8.0-openjdk\
+  java-1.8.0-openjdk-devel\
+  git\
+  cargo\
+  ncurses-devel\
+  which\
+  unzip\
+  zip\
+  make\
   gcc\
   automake\
   autoconf
@@ -56,19 +56,23 @@ RUN source "$HOME/.sdkman/bin/sdkman-init.sh"\
   && sdk install maven
 
 RUN mkdir -p /home/vimuser/.vim/\
-	&& git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+  && git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
 
 RUN git clone https://github.com/eclipse/eclipse.jdt.ls\
-	&& cd eclipse.jdt.ls\
-	&& ./mvnw clean verify
+  && cd eclipse.jdt.ls\
+  && ./mvnw clean install
 
 RUN echo "\n" | vim +PluginInstall +qall
 
 RUN cd /home/vimuser/.vim/bundle/LanguageClient-neovim\
   && make release
 
-USER root
+RUN cd /home/vimuser/.vim/bundle/LanguageClient-neovim\
+  && rm -fr build.rs Cargo.toml install.ps1 LICENSE.txt min-vimrc src tests\
+            Cargo.lock ci INSTALL.md install.sh Makefile target TODO.md
 
+USER root
+WORKDIR /tmp
 RUN yum remove -y autoconf automake make gcc cargo
 RUN yum clean all
 
