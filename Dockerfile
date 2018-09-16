@@ -2,21 +2,20 @@ FROM openjdk:11-slim
 
 WORKDIR /tmp
 
-RUN apt -y install wget curl
-RUN wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-RUN apt install -y /tmp/epel-release-latest-7.noarch.rpm
-RUN apt -y install python3-devel\
+RUN apt update && apt -y install wget curl
+RUN apt -y install python3-dev\
   python3-pip\
   git\
   cargo\
-  ncurses-devel\
-  which\
+  ncurses-dev\
   unzip\
   zip\
   make\
   gcc\
   automake\
-  autoconf
+  autoconf\
+  pkg-config\
+  bash
 
 RUN pip3 install neovim
 
@@ -49,9 +48,9 @@ USER vimuser
 WORKDIR /home/vimuser
 
 RUN curl -s "https://get.sdkman.io" | bash
-RUN source "$HOME/.sdkman/bin/sdkman-init.sh"\
+RUN /bin/bash -c 'source "$HOME/.sdkman/bin/sdkman-init.sh"\
   && sdk install gradle 4.10\
-  && sdk install maven
+  && sdk install maven'
 
 RUN mkdir -p /home/vimuser/.vim/\
   && git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
