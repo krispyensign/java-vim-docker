@@ -78,6 +78,3 @@ RUN apt remove -y autoconf automake make gcc cargo
 USER vimuser
 WORKDIR /home/vimuser
 
-ENV JAVA_HOME /usr/local/jdk-10
-ENV PATH $PATH:/usr/local/jdk-10/bin
-
