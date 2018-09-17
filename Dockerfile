@@ -1,10 +1,9 @@
-FROM openjdk:11-slim
+FROM alpine:edge
 
 WORKDIR /tmp
 
-RUN apt update && apt -y install wget curl
-RUN apt -y install python3-dev\
-  python3-pip\
+RUN apk update && apk add wget curl
+RUN apk add python3-dev\
   git\
   cargo\
   ncurses-dev\
@@ -14,8 +13,10 @@ RUN apt -y install python3-dev\
   gcc\
   automake\
   autoconf\
-  pkg-config\
-  bash
+  pkgconf\
+  bash\
+  gradle\
+  maven
 
 RUN pip3 install neovim
 
@@ -36,7 +37,7 @@ RUN git clone https://github.com/universal-ctags/ctags\
   && cd ..\
   && rm -fr ctags
 
-RUN useradd -ms /bin/bash vimuser
+RUN adduser -h /home/vimuser -D -s /bin/bash vimuser
 
 RUN mkdir -p /home/vimuser/bin
 COPY vimrc /home/vimuser/.vimrc
@@ -44,36 +45,41 @@ COPY java-lsp.sh /home/vimuser/bin/java-lsp.sh
 RUN chown -R vimuser:vimuser /home/vimuser/\
   && chmod +x /home/vimuser/bin/java-lsp.sh
 
+RUN apk add openjdk8
+
 USER vimuser
 WORKDIR /home/vimuser
-
-RUN curl -s "https://get.sdkman.io" | bash
-RUN /bin/bash -c 'source "$HOME/.sdkman/bin/sdkman-init.sh"\
-  && sdk install gradle 4.10\
-  && sdk install maven'
 
 RUN mkdir -p /home/vimuser/.vim/\
   && git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
 
 RUN git clone https://github.com/eclipse/eclipse.jdt.ls\
   && cd eclipse.jdt.ls\
-  && ./mvnw install -DskipTests
+  && ./mvnw clean verify -DskipTests
 
 RUN echo "\n" | vim +PluginInstall +qall
 
 RUN cd /home/vimuser/.vim/bundle/LanguageClient-neovim\
   && make release
 
-RUN cd /home/vimuser/.vim/bundle/LanguageClient-neovim\
-  && rm -fr build.rs Cargo.toml install.ps1 LICENSE.txt min-vimrc src tests\
-            Cargo.lock ci INSTALL.md install.sh Makefile target TODO.md
-RUN rm -fr .cache .cargo .eclipse .gradle
-
 USER root
 WORKDIR /tmp
 
-RUN apt remove -y autoconf automake make gcc cargo
+RUN cd /home/vimuser/.vim/bundle/LanguageClient-neovim\
+  && rm -fr build.rs Cargo.toml install.ps1 LICENSE.txt min-vimrc src tests\
+            Cargo.lock ci INSTALL.md install.sh Makefile target TODO.md\
+            .git .github .circleci .vscode .vim
+
+RUN apk del autoconf automake make gcc cargo openjdk8 pkgconf ncurses-dev
+RUN rm -fr .cache .cargo .eclipse .gradle
+
+RUN wget https://download.java.net/java/early_access/alpine/28/binaries/openjdk-11+28_linux-x64-musl_bin.tar.gz\
+  && tar xvfz openjdk-11+28_linux-x64-musl_bin.tar.gz\
+  && mkdir -p /opt/\
+  && cp -fr jdk-11 /opt/java/\
+  && rm -fr openjdk-11+28_linux-x64-musl_bin.tar.gz jdk-11
 
 USER vimuser
 WORKDIR /home/vimuser
+RUN rm -fr .cache .cargo .eclipse .gradle .m2
 
