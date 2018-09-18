@@ -74,7 +74,9 @@ RUN apk update && apk add wget\
   unzip\
   zip\
   bash\
-  gcc
+  gcc\
+  musl-dev\
+  musl
 RUN pip3 install neovim
 RUN wget https://download.java.net/java/early_access/alpine/28/binaries/openjdk-11+28_linux-x64-musl_bin.tar.gz\
   && tar xvfz openjdk-11+28_linux-x64-musl_bin.tar.gz\
