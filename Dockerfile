@@ -1,9 +1,11 @@
-FROM alpine:edge
+FROM alpine:edge as builder
 
 WORKDIR /tmp
 
-RUN apk update && apk add wget curl
-RUN apk add python3-dev\
+RUN apk update && apk add wget\
+  curl\
+  python3-dev\
+  python3\
   git\
   cargo\
   ncurses-dev\
@@ -16,36 +18,29 @@ RUN apk add python3-dev\
   pkgconf\
   bash\
   gradle\
-  maven
+  maven\
+  openjdk8
 
 RUN pip3 install neovim
 
 RUN git clone https://github.com/vim/vim\
   && cd vim\
-  && ./configure --enable-python3interp\
+  && ./configure --enable-python3interp --prefix=/usr/local\
   && make\
-  && make install\
-  && cd ..\
-  && rm -fr vim
+  && make install
 
 RUN git clone https://github.com/universal-ctags/ctags\
   && cd ctags\
   && ./autogen.sh\
-  && ./configure\
+  && ./configure --prefix=/usr/local\
   && make\
-  && make install\
-  && cd ..\
-  && rm -fr ctags
+  && make install
 
 RUN adduser -h /home/vimuser -D -s /bin/bash vimuser
-
-RUN mkdir -p /home/vimuser/bin
 COPY vimrc /home/vimuser/.vimrc
 COPY java-lsp.sh /home/vimuser/bin/java-lsp.sh
 RUN chown -R vimuser:vimuser /home/vimuser/\
   && chmod +x /home/vimuser/bin/java-lsp.sh
-
-RUN apk add openjdk8
 
 USER vimuser
 WORKDIR /home/vimuser
@@ -62,24 +57,37 @@ RUN echo "\n" | vim +PluginInstall +qall
 RUN cd /home/vimuser/.vim/bundle/LanguageClient-neovim\
   && make release
 
-USER root
-WORKDIR /tmp
-
 RUN cd /home/vimuser/.vim/bundle/LanguageClient-neovim\
   && rm -fr build.rs Cargo.toml install.ps1 LICENSE.txt min-vimrc src tests\
             Cargo.lock ci INSTALL.md install.sh Makefile target TODO.md\
             .git .github .circleci .vscode .vim
 
-RUN apk del autoconf automake make gcc cargo openjdk8 pkgconf ncurses-dev
-RUN rm -fr .cache .cargo .eclipse .gradle
-
+######################################################################################################################
+FROM alpine:edge
+WORKDIR /tmp
+RUN apk update && apk add wget\
+  curl\
+  python3-dev\
+  python3\
+  git\
+  ncurses-dev\
+  unzip\
+  zip\
+  bash
+RUN pip3 install neovim
 RUN wget https://download.java.net/java/early_access/alpine/28/binaries/openjdk-11+28_linux-x64-musl_bin.tar.gz\
   && tar xvfz openjdk-11+28_linux-x64-musl_bin.tar.gz\
   && mkdir -p /opt/\
   && cp -fr jdk-11 /opt/java/\
   && rm -fr openjdk-11+28_linux-x64-musl_bin.tar.gz jdk-11
-
+RUN adduser -h /home/vimuser -D -s /bin/bash vimuser
+COPY vimrc /home/vimuser/.vimrc
+COPY java-lsp.sh /home/vimuser/bin/java-lsp.sh
+ADD --from=builder /usr/local/ /usr/local/
+ADD --from=builder /home/vimuser/eclipse.jdt.ls /home/vimuser/eclipse.jdt.ls
+ADD --from=builder /home/vimuser/.vim /home/vimuser/.vim
+RUN chown -R vimuser:vimuser /home/vimuser/\
+  && chmod +x /home/vimuser/bin/java-lsp.sh
 USER vimuser
 WORKDIR /home/vimuser
-RUN rm -fr .cache .cargo .eclipse .gradle .m2
 
