@@ -83,9 +83,9 @@ RUN wget https://download.java.net/java/early_access/alpine/28/binaries/openjdk-
 RUN adduser -h /home/vimuser -D -s /bin/bash vimuser
 COPY vimrc /home/vimuser/.vimrc
 COPY java-lsp.sh /home/vimuser/bin/java-lsp.sh
-ADD --from=builder /usr/local/ /usr/local/
-ADD --from=builder /home/vimuser/eclipse.jdt.ls /home/vimuser/eclipse.jdt.ls
-ADD --from=builder /home/vimuser/.vim /home/vimuser/.vim
+COPY --from=builder /usr/local/ /usr/local/
+COPY --from=builder /home/vimuser/eclipse.jdt.ls /home/vimuser/eclipse.jdt.ls
+COPY --from=builder /home/vimuser/.vim /home/vimuser/.vim
 RUN chown -R vimuser:vimuser /home/vimuser/\
   && chmod +x /home/vimuser/bin/java-lsp.sh
 USER vimuser
