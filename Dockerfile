@@ -17,7 +17,6 @@ RUN apk update && apk add wget\
   autoconf\
   pkgconf\
   bash\
-  gradle\
   maven\
   openjdk8
 
@@ -25,7 +24,7 @@ RUN pip3 install neovim
 
 RUN git clone https://github.com/vim/vim\
   && cd vim\
-  && ./configure --enable-python3interp --prefix=/usr/local\
+  && ./configure --enable-python3interp=dynamic --enable-cscope --prefix=/usr/local\
   && make\
   && make install
 
@@ -77,6 +76,7 @@ RUN apk update && apk add wget\
   gcc\
   musl-dev\
   musl
+
 RUN pip3 install neovim
 RUN wget https://download.java.net/java/early_access/alpine/28/binaries/openjdk-11+28_linux-x64-musl_bin.tar.gz\
   && tar xvfz openjdk-11+28_linux-x64-musl_bin.tar.gz\
