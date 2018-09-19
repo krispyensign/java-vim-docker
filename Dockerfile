@@ -83,6 +83,11 @@ RUN wget https://download.java.net/java/early_access/alpine/28/binaries/openjdk-
   && mkdir -p /opt/\
   && cp -fr jdk-11 /opt/java/\
   && rm -fr openjdk-11+28_linux-x64-musl_bin.tar.gz jdk-11
+RUN cd /opt/\
+  && wget https://services.gradle.org/distributions/gradle-4.10.1-bin.zip\
+  && mkdir -p /opt/gradle\
+  && unzip -d /opt/gradle gradle-4.10.1-bin.zip\
+  && rm gradle-4.10.1-bin.zip
 RUN adduser -h /home/vimuser -D -s /bin/bash vimuser
 COPY vimrc /home/vimuser/.vimrc
 COPY java-lsp.sh /home/vimuser/bin/java-lsp.sh
